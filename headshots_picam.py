@@ -1,0 +1,42 @@
+import cv2
+from picamera import PiCamera
+from picamera.array import PiRGBArray
+import os
+import sys
+
+name = sys.argv[1]
+output_dir = f"dataset/{name}"
+
+# Ensure the output directory exists
+os.makedirs(output_dir, exist_ok=True)
+
+cam = PiCamera()
+cam.resolution = (512, 304)
+cam.framerate = 10
+rawCapture = PiRGBArray(cam, size=(512, 304))
+
+img_counter = 0
+
+try:
+    while True:
+        for frame in cam.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+            image = frame.array
+            cv2.imshow("Press Space to take a photo", image)
+            rawCapture.truncate(0)
+
+            k = cv2.waitKey(1)
+            if k % 256 == 27:  # ESC pressed
+                print("Escape hit, closing...")
+                break
+            elif k % 256 == 32:  # SPACE pressed
+                img_name = os.path.join(output_dir, f"image_{img_counter}.jpg")
+                cv2.imwrite(img_name, image)
+                print(f"{img_name} written!")
+                img_counter += 1
+
+        if k % 256 == 27:
+            break
+
+finally:
+    cv2.destroyAllWindows()
+    cam.close()

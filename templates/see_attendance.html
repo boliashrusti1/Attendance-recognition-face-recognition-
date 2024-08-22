@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>See Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance</h1>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Time</th>
+            </tr>
+            {% for name, time in attendance.items() %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
